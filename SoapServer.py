@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 #import socket
-=======
-import socket
->>>>>>> 9ed4bc76406f3336006efd4f296783a647f72ce3
 from flask import Flask
 from flask_spyne import Spyne
 from spyne.model.complex import Iterable
@@ -13,13 +9,8 @@ from spyne.protocol.soap import Soap11
 app = Flask(__name__)
 spyne = Spyne(app)
 
-<<<<<<< HEAD
 class AOSProjectServices(spyne.Service):
     __service_url_path__ = '/aosprojectservices'
-=======
-class StringReversalService(spyne.Service):
-    __service_url_path__ = '/stringreverse'
->>>>>>> 9ed4bc76406f3336006efd4f296783a647f72ce3
     __in_protocol__ = Soap11(validator='lxml')
     __out_protocol__ = Soap11()
 
@@ -32,7 +23,6 @@ class StringReversalService(spyne.Service):
             reversedString += str[index]
         return reversedString
 
-<<<<<<< HEAD
     @spyne.srpc(Unicode,Unicode,_returns = Unicode)
     def Add(num1,num2):
         return num1 + num2
@@ -41,8 +31,6 @@ class StringReversalService(spyne.Service):
     def Multiply(num1,num2):
         return num1 * num2
 
-=======
->>>>>>> 9ed4bc76406f3336006efd4f296783a647f72ce3
 # ip_address = socket.gethostbyname(socket.gethostname())
 # print ip_address
 
