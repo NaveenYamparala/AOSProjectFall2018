@@ -23,11 +23,11 @@ class AOSProjectServices(spyne.Service):
             reversedString += str[index]
         return reversedString
 
-    @spyne.srpc(Unicode,Unicode,_returns = Unicode)
+    @spyne.srpc(float,float,_returns = float)
     def Add(num1,num2):
         return num1 + num2
     
-    @spyne.srpc(Unicode,Unicode,_returns = Unicode)
+    @spyne.srpc(float,float,_returns = float)
     def Multiply(num1,num2):
         return num1 * num2
 

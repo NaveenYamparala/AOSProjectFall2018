@@ -5,3 +5,5 @@ client = Client(url)
 #print client ## shows the details of this service
 
 print client.service.stringReverse("Naveen")
+print client.service.Add(20,10)
+print client.service.Multiply(20,10)
