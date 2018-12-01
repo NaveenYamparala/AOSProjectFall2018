@@ -35,4 +35,4 @@ class AOSProjectServices(spyne.Service):
 # print ip_address
 
 if __name__ == '__main__':
-    app.run(host = '127.0.0.1')
+    app.run(host = '127.0.1.1')
