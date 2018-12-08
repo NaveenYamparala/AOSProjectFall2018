@@ -1,4 +1,6 @@
-#import socket
+import socket
+import psutil
+import time
 from flask import Flask
 from flask_spyne import Spyne
 from spyne.model.complex import Iterable
@@ -16,6 +18,7 @@ class AOSProjectServices(spyne.Service):
 
     @spyne.srpc(Unicode, _returns = Unicode)
     def stringReverse(str):
+        time.sleep(10)
         reversedString = ''
         index = len(str)
         while index:
@@ -23,16 +26,26 @@ class AOSProjectServices(spyne.Service):
             reversedString += str[index]
         return reversedString
 
+
     @spyne.srpc(float,float,_returns = float)
     def Add(num1,num2):
+        time.sleep(3)
         return num1 + num2
-    
+
+
     @spyne.srpc(float,float,_returns = float)
     def Multiply(num1,num2):
+        time.sleep(6)
         return num1 * num2
 
-# ip_address = socket.gethostbyname(socket.gethostname())
-# print ip_address
+   
+    @spyne.srpc(_returns = float)
+    def ServerLoad():
+        return psutil.cpu_percent()
 
 if __name__ == '__main__':
+    # Code to get local ip of the machine
+    # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # s.connect(("8.8.8.8", 80))
+    # localIP = s.getsockname()[0]
     app.run(host = '127.0.1.1')
