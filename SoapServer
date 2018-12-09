@@ -1,3 +1,0 @@
-@service.soap('MyAdd', returns={'result':int}, args={'a':int, 'b':int,})
-def add(a, b):
-    return a + b
