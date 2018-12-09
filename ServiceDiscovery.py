@@ -1,16 +1,25 @@
-from flask import Flask
-from flask_spyne import Spyne
-from re import split
-from spyne.model.primitive import Integer, Unicode
-from spyne.protocol.soap import Soap11
-from suds.client import Client
-# import re
-# import sched
 import time
 import threading
+from re import split
+
+import suds
+from flask import Flask
+from flask_spyne import Spyne
+from spyne.model.complex import Iterable
+from spyne.model.primitive import Integer, Unicode
+from spyne.protocol.soap import Soap11
+from suds.cache import NoCache
+from suds.client import Client
+
 
 app = Flask(__name__)
 spyne = Spyne(app)
+
+# Web Server URL's
+webServerUrls = []
+
+#Load Balncer Server URL
+loadBalancerServerURL = ''
 
 serviceDictionary = {'key':['1']}
 
@@ -19,7 +28,17 @@ class AOSServiceDiscovery(spyne.Service):
     __in_protocol__ = Soap11(validator='lxml')
     __out_protocol__ = Soap11()
    
-    @spyne.srpc(Unicode,Unicode, _returns=Unicode)
+    @spyne.srpc(Unicode,str,bool)
+    def registerServer(self,str,isLoadBalancerServer = False):
+        global webServerUrls
+        global loadBalancerServerURL
+        if(isLoadBalancerServer):
+             loadBalancerServerURL = str
+        else:
+            webServerUrls.append(str)
+           
+
+    @spyne.srpc(Unicode,Unicode, _returns= Unicode)
     def discover(self,str):
         global serviceDictionary
         filteredServers = []
@@ -35,11 +54,13 @@ class AOSServiceDiscovery(spyne.Service):
             if(len(filteredServers) == 0):
                 return "filtered servers is 0"
             else:
-                if(len(filteredServers)==1):
+                if(len(filteredServers)==0):
                     return filteredServers[0] + '?wsdl'
                 else:
-                     loadBalancerClient = Client('http://127.0.3.1:5000/aosprojectservices?wsdl')
-                     return loadBalancerClient.service.findBestServer("",filteredServers)
+                     loadBalancerClient = Client(loadBalancerServerURL)
+                     filteredServers = '-'.join(filteredServers)
+                     x = loadBalancerClient.service.findBestServer("",filteredServers)
+                     return unicode(x).encode('ascii','ignore') + '?wsdl'
         else:
             return "service Dictionary is empty"
 
@@ -48,18 +69,22 @@ class AOSServiceDiscovery(spyne.Service):
         while True:
             global serviceDictionary
             serviceDictionary = {}
-            urlArray = ['http://127.0.1.1:5000/aosprojectservices?wsdl']
+            urlArray = webServerUrls
             for url in urlArray:
-                client = Client(url)
-                key = url.split('?')[0]
-                serviceDictionary.update({key:[]})
-                for method in client.wsdl.services[0].ports[0].methods.values():    
-                    serviceDictionary[key].append(method.name)
+                try:
+                    client = Client(url,cache = NoCache())
+                    key = url.split('?')[0]
+                    serviceDictionary.update({key:[]})
+                    for method in client.wsdl.services[0].ports[0].methods.values():    
+                        serviceDictionary[key].append(method.name)
+                except Exception as e:
+                    x = e
+                    continue
             time.sleep(10)
         
 
 if __name__ == '__main__':
-    thread = threading.Thread(target= app.run,args=('127.0.2.1',None,None,None))
+    thread = threading.Thread(target= app.run,args=('0.0.0.0',9000,None,None))
     #thread.daemon = True                            # Daemonize thread
     thread.start()
     AOSServiceDiscovery.fetchServicesData()

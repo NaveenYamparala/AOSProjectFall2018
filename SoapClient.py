@@ -1,7 +1,7 @@
 from suds.client import Client
 #url="http://www.thomas-bayer.com/axis2/services/BLZService?wsdl"
-discoveryUrl = 'http://127.0.2.1:5000/servicediscovery?wsdl'
-discoveryClient = Client(discoveryUrl)
+discoveryUrl = 'http://10.0.0.40:9000/servicediscovery?wsdl'
+discoveryClient = Client(discoveryUrl,timeout=100)
 #print client ## shows the details of this service
 
 # print client.service.stringReverse("Naveen")
@@ -11,7 +11,7 @@ serviceRequired = raw_input("Enter number of required service ( 1 --> Add, 2 - M
 
 if serviceRequired == '1':
     serviceUrl = discoveryClient.service.discover("","Add")
-    serviceClient = Client(serviceUrl)
+    serviceClient = Client(serviceUrl,timeout=100)
     print serviceClient.service.Add(250,50)
 elif serviceRequired == '2':
     serviceUrl = discoveryClient.service.discover("","Multiply")
