@@ -58,9 +58,9 @@ if __name__ == '__main__':
     localIP = s.getsockname()[0]
 
     discoveryClient = Client(serviceDiscoveryServerURL,timeout=100)
-    discoveryClient.service.registerServer("",'http://'+ localIP + ':8000/aosprojectservices?wsdl')
+    discoveryClient.service.registerServer("",'http://'+ localIP + ':8005/aosprojectservices?wsdl')
 
     loadBalancerClient = Client(loadBalancingServerURL,timeout=100)
-    loadBalancerClient.service.registerServer("",'http://'+ localIP + ':8000/aosprojectservices?wsdl')
+    loadBalancerClient.service.registerServer("",'http://'+ localIP + ':8005/aosprojectservices?wsdl')
 
     app.run(host = '0.0.0.0',port=8005)
