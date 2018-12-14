@@ -36,7 +36,7 @@ class AOSLoadBalancer(spyne.Service):
     __in_protocol__ = Soap11(validator='lxml')
     __out_protocol__ = Soap11()
    
-   #Webservice used by Service discovery server to get the best available
+   ##Webservice used by Service discovery server to get the best available
    #server after load balancing
     @spyne.srpc(Unicode,str, _returns=Unicode)
     def findBestServer(self,inputServersList):
@@ -80,7 +80,6 @@ class AOSLoadBalancer(spyne.Service):
                         webServerUrls.remove(url)
                     elif hasattr(e,'errorno') and e.reason.errorno == 111:
                         webServerUrls.remove(url)
-                    lock.release()
                     continue
             lock.release()
             time.sleep(1)
