@@ -1,16 +1,30 @@
+from suds.cache import NoCache
 from suds.client import Client
+import socket
+import time
 
+# Code to get local ip of the machine
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("7.7.7.7", 80))
+localIP = s.getsockname()[0]
 
-#url="http://www.thomas-bayer.com/axis2/services/BLZService?wsdl"
-url = 'http://127.0.0.1:5000/aosprojectservices?wsdl'
-client = Client(url)
+try:
+    discoveryUrl = 'http://'+localIP+':8082/servicediscovery?wsdl'
+    discoveryClient = Client(discoveryUrl,cache = NoCache(),timeout=100)
+except Exception as identifier:
+    discoveryUrl = 'http://'+localIP+':8083/servicediscovery?wsdl'
+    discoveryClient = Client(discoveryUrl,cache = NoCache(),timeout=100)
 
-for method in client.wsdl.services[0].ports[0].methods.values():    
-    print method.name ## shows the details of this service
-# for method in client.wsdl.services[0].ports:    
-#     print method ## shows the details of this service
+#Number of requests
+i = 100
+start = time.time()
+while i > 0:
+    serviceUrl = discoveryClient.service.discover("","Add")
+    serviceClient = Client(serviceUrl,cache = NoCache(),timeout=5)
+    print serviceClient.service.Add(250,50)
+    print i
+    i = i-1
+end = time.time()
 
-#print client.service.discover("Add")
-# print client.service.Add(20,10)
-# print client.service.Multiply(20,10)
-print client.service.ServerLoad()
+print 'completed'
+print end - start

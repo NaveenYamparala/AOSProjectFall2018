@@ -22,7 +22,7 @@ spyne = Spyne(app)
 webServerUrls = []
 
 #Load Balncer Server URL
-loadBalancerServerURL = []
+loadBalancerServerURL = ''
 
 lock = threading.Lock()
 
@@ -63,7 +63,7 @@ class AOSServiceDiscovery(spyne.Service):
                      except Exception as e:
                          if hasattr(e,'errorno') and e.reason.errorno == 111:
                             loadBalancerClient = Client(loadBalancerServerURL[1])
-                     
+
                      filteredServers = '-'.join(filteredServers)
                      #Requests load balancer to find the best server out of the available servers for requested service
                      x = loadBalancerClient.service.findBestServer("",filteredServers)
@@ -78,7 +78,7 @@ class AOSServiceDiscovery(spyne.Service):
     def fetchServicesData():
         while True:
             global serviceDictionary,lock
-            global webServerUrls,loadBalancerServerURL
+            global webServerUrls
             lock.acquire()
             serviceDictionary = {}
             urlArray = webServerUrls
@@ -95,7 +95,6 @@ class AOSServiceDiscovery(spyne.Service):
                     elif hasattr(e,'errorno') and e.reason.errorno == 111:
                         webServerUrls.remove(url)
                     continue
-
             for loadurl in loadBalancerServerURL:
                 try:
                     client = Client(loadurl,cache = NoCache(),timeout=5)
@@ -105,6 +104,7 @@ class AOSServiceDiscovery(spyne.Service):
                     elif hasattr(e,'errorno') and e.reason.errorno == 111:
                         loadBalancerServerURL.remove(loadurl)
                     continue
+                    
             lock.release()
             time.sleep(10)
 
@@ -115,14 +115,14 @@ class AOSServiceDiscovery(spyne.Service):
         global webServerUrls
         global loadBalancerServerURL
         if(isLoadBalancerServer):
-             loadBalancerServerURL.append(str)
+             loadBalancerServerURL = str
         else:
             webServerUrls.append(str)
         
 
 if __name__ == '__main__':
     #Spawns a thread to handle incoming requests
-    thread = threading.Thread(target= app.run,args=('0.0.0.0',8082,None,None))
+    thread = threading.Thread(target= app.run,args=('0.0.0.0',8083,None,None))
     thread.start()
 
     #Starts continous services data fetching from web servers

@@ -34,7 +34,7 @@ class AOSProjectServices(spyne.Service):
         while index:
             index -= 1                       
             reversedString += str[index]
-        return 'Server 1 -> ' + reversedString
+        return 'Server 3 -> ' + reversedString
 
     #Add Service
     @spyne.srpc(float,float,_returns = str)
@@ -44,7 +44,7 @@ class AOSProjectServices(spyne.Service):
         extraCPULoad = extraCPULoad + 1
         reqCount = reqCount + 1
         # time.sleep(1)
-        return 'Server 1 -> ' + str(num1 + num2)
+        return 'Server 3 -> ' + str(num1 + num2)
 
     #Multiply Service
     @spyne.srpc(float,float,_returns = str)
@@ -54,24 +54,25 @@ class AOSProjectServices(spyne.Service):
         extraCPULoad = extraCPULoad + 1
         reqCount = reqCount + 1
         # time.sleep(2)
-        return 'Server 1 -> ' + str(num1 * num2)
+        return 'Server 3 -> ' + str(num1 * num2)
 
-    #Service to return server load to Load Balancing server   
+    #Service to return server load to Load Balancing server
     @spyne.srpc(_returns = float)
     def ServerLoad():
-        #return psutil.cpu_percent()
-        return 10 + extraCPULoad
+        #return psutil.cpu_percent() + extraCPULoad
+        return 30 + extraCPULoad
 
     #Service to find the number of requests handled by web server
     @spyne.srpc(_returns = str)
     def RequestCount():
-        return 'Server 1 -> ' + str(reqCount)
+        return 'Server 3 -> ' + str(reqCount)
 
 if __name__ == '__main__':
     # Code to get local ip of the machine
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     localIP = s.getsockname()[0]
+
 
     #Service Discovery Server URL
     serviceDiscoveryServerURL = ['http://'+ localIP +':8082/servicediscovery?wsdl','http://'+localIP+':8083/servicediscovery?wsdl']
@@ -82,12 +83,12 @@ if __name__ == '__main__':
     #To registers webserver with Service Discovery server
     for server in serviceDiscoveryServerURL:
         discoveryClient = Client(server,timeout=5)
-        discoveryClient.service.registerServer("",'http://'+ localIP + ':8000/aosprojectservices?wsdl')
+        discoveryClient.service.registerServer("",'http://'+ localIP + ':8010/aosprojectservices?wsdl')
 
     #To register webserver with Load balancing server
     for server in loadBalancingServerURL:
         loadBalancerClient = Client(server,timeout=5)
-        loadBalancerClient.service.registerServer("",'http://'+ localIP + ':8000/aosprojectservices?wsdl')
+        loadBalancerClient.service.registerServer("",'http://'+ localIP + ':8010/aosprojectservices?wsdl')
 
     #Runs the webserver
-    app.run(host = '0.0.0.0',port=8000)
+    app.run(host = '0.0.0.0',port=8010)

@@ -21,6 +21,7 @@ spyne = Spyne(app)
 # Web Server URL's
 webServerUrls = []
 
+
 serversDictionary = {'key':'1'}
 #s = sched.scheduler(time.time, time.sleep)
 lock = threading.Lock()
@@ -76,7 +77,7 @@ class AOSLoadBalancer(spyne.Service):
                     lock.release()
                     continue
             lock.release()
-            time.sleep(1)
+            time.sleep(5)
 
     #Webservice to register web servers
     @spyne.srpc(Unicode,str)
@@ -97,9 +98,9 @@ if __name__ == '__main__':
     #To register Load balncing server with service discovery server
     for server in serviceDiscoveryServerURL:
         discoveryClient = Client(server,timeout=5)
-        discoveryClient.service.registerServer("",'http://'+ localIP + ':9005/loadbalancer?wsdl',True)
+        discoveryClient.service.registerServer("",'http://'+ localIP + ':9006/loadbalancer?wsdl',True)
 
-    thread = threading.Thread(target= app.run,args=('0.0.0.0',9005,None,None))
+    thread = threading.Thread(target= app.run,args=('0.0.0.0',9006,None,None))
     thread.start()
     
     AOSLoadBalancer.fetchLoadData()
