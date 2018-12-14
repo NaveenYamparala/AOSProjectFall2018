@@ -82,13 +82,21 @@ if __name__ == '__main__':
 
     #To registers webserver with Service Discovery server
     for server in serviceDiscoveryServerURL:
-        discoveryClient = Client(server,timeout=5)
-        discoveryClient.service.registerServer("",'http://'+ localIP + ':9000/aosprojectservices?wsdl')
+        try:
+            discoveryClient = Client(server,timeout=5)
+            discoveryClient.service.registerServer("",'http://'+ localIP + ':9000/aosprojectservices?wsdl')
+        except Exception as identifier:
+            continue
+        
 
     #To register webserver with Load balancing server
     for server in loadBalancingServerURL:
-        loadBalancerClient = Client(server,timeout=5)
-        loadBalancerClient.service.registerServer("",'http://'+ localIP + ':9000/aosprojectservices?wsdl')
+        try:
+            loadBalancerClient = Client(server,timeout=5)
+            loadBalancerClient.service.registerServer("",'http://'+ localIP + ':9000/aosprojectservices?wsdl')
+        except Exception as identifier:
+            pass
+        
 
     #Runs the webserver
     app.run(host = '0.0.0.0',port=9000)

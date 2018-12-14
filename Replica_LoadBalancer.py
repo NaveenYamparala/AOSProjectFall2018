@@ -72,7 +72,7 @@ class AOSLoadBalancer(spyne.Service):
             urlArray = webServerUrls
             for url in urlArray:
                 try:
-                    client = Client(url,cache = NoCache(),timeout=5)
+                    client = Client(url,cache = NoCache(),timeout=30)
                     key = url.split('?')[0]
                     serversDictionary[key] = client.service.ServerLoad()
                 except Exception as e:
@@ -102,8 +102,12 @@ if __name__ == '__main__':
 
     #To register Load balncing server with service discovery server
     for server in serviceDiscoveryServerURL:
-        discoveryClient = Client(server,timeout=5)
-        discoveryClient.service.registerServer("",'http://'+ localIP + ':9006/loadbalancer?wsdl',True)
+        try:
+            discoveryClient = Client(server,timeout=5)
+            discoveryClient.service.registerServer("",'http://'+ localIP + ':9006/loadbalancer?wsdl',True)
+        except Exception as identifier:
+            continue
+        
 
     thread = threading.Thread(target= app.run,args=('0.0.0.0',9006,None,None))
     thread.start()

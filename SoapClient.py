@@ -6,8 +6,13 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("7.7.7.7", 80))
 localIP = s.getsockname()[0]
 
-discoveryUrl = 'http://'+localIP+':8082/servicediscovery?wsdl'
-discoveryClient = Client(discoveryUrl,timeout=100)
+try:
+    discoveryUrl = 'http://'+localIP+':8082/servicediscovery?wsdl'
+    discoveryClient = Client(discoveryUrl,timeout=100)
+except Exception as identifier:
+    discoveryUrl = 'http://'+localIP+':8083/servicediscovery?wsdl'
+    discoveryClient = Client(discoveryUrl,timeout=100)
+
 
 serviceRequired = raw_input("Enter number of required service ( 1 --> Add, 2 - Multiply, 3 --> String Reverse ) \n")
 

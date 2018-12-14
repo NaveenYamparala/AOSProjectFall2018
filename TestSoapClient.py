@@ -19,9 +19,9 @@ except Exception as identifier:
 i = 100
 start = time.time()
 while i > 0:
-    serviceUrl = discoveryClient.service.discover("","Add")
+    serviceUrl = discoveryClient.service.discover("","stringReverse")
     serviceClient = Client(serviceUrl,cache = NoCache(),timeout=5)
-    print serviceClient.service.Add(250,50)
+    print serviceClient.service.stringReverse('AOS')
     print i
     i = i-1
 end = time.time()

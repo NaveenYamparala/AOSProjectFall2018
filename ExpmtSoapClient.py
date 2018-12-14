@@ -14,12 +14,12 @@ WebClient = Client(serverUrl,timeout=100)
 print 'Request Count -> '+ WebClient.service.RequestCount()
 print 'SeverLoad -> ' + str(WebClient.service.ServerLoad())
 
-serverUrl2 = 'http://'+localIP+':8005/aosprojectservices?wsdl'
+serverUrl2 = 'http://'+localIP+':9000/aosprojectservices?wsdl'
 WebClient2 = Client(serverUrl2,timeout=100)
 print 'Request Count -> '+ WebClient2.service.RequestCount()
 print 'SeverLoad -> ' + str(WebClient2.service.ServerLoad())
 
-serverUrl3 = 'http://'+localIP+':8010/aosprojectservices?wsdl'
+serverUrl3 = 'http://'+localIP+':10000/aosprojectservices?wsdl'
 WebClient3 = Client(serverUrl3,timeout=100)
 print 'Request Count -> '+ WebClient3.service.RequestCount()
 print 'SeverLoad -> ' + str(WebClient3.service.ServerLoad())

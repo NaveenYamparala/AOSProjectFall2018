@@ -89,7 +89,7 @@ class AOSServiceDiscovery(spyne.Service):
                 urlArray = webServerUrls
                 for url in urlArray:
                     try:
-                        client = Client(url,cache = NoCache(),timeout=5)
+                        client = Client(url,cache = NoCache(),timeout=30)
                         key = url.split('?')[0]
                         serviceDictionary.update({key:[]})
                         for method in client.wsdl.services[0].ports[0].methods.values():    
@@ -103,7 +103,7 @@ class AOSServiceDiscovery(spyne.Service):
 
                 for loadurl in loadBalancerServerURL:
                     try:
-                        client = Client(loadurl,cache = NoCache(),timeout=5)
+                        client = Client(loadurl,cache = NoCache(),timeout=30)
                     except Exception as e:
                         if hasattr(e,'reason') and e.reason.message == 'timed out':
                             loadBalancerServerURL.remove(loadurl)
