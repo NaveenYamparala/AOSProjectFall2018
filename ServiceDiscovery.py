@@ -107,7 +107,7 @@ class AOSServiceDiscovery(spyne.Service):
                     except Exception as e:
                         if hasattr(e,'reason') and e.reason.message == 'timed out':
                             loadBalancerServerURL.remove(loadurl)
-                        elif hasattr(e,'errorno') and e.reason.errorno == 111:
+                        elif hasattr(e,'reason') and e.reason.errno == 111:
                             loadBalancerServerURL.remove(loadurl)
                         continue
                 lock.release()

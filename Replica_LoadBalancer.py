@@ -78,7 +78,7 @@ class AOSLoadBalancer(spyne.Service):
                 except Exception as e:
                     if hasattr(e,'reason') and e.reason.message == 'timed out':
                         webServerUrls.remove(url)
-                    elif hasattr(e,'errorno') and e.reason.errorno == 111:
+                    elif hasattr(e,'reason') and e.reason.errno == 111:
                         webServerUrls.remove(url)
                     continue
             lock.release()
