@@ -5,6 +5,7 @@ from imp import acquire_lock
 from ntpath import split
 from platform import release
 from symbol import continue_stmt
+from sys import maxint
 
 from flask import Flask
 from flask_spyne import Spyne
@@ -13,6 +14,8 @@ from spyne.model.primitive import Integer, Unicode
 from spyne.protocol.soap import Soap11
 from suds.cache import NoCache
 from suds.client import Client
+import sys
+
 
 
 app = Flask(__name__)
@@ -23,6 +26,8 @@ webServerUrls = []
 
 
 serversDictionary = {'key':'1'}
+
+
 #s = sched.scheduler(time.time, time.sleep)
 lock = threading.Lock()
 
@@ -43,7 +48,8 @@ class AOSLoadBalancer(spyne.Service):
                 return "service Dictionary is not defined"
             keys = list(serversDictionary.keys())
             if (len(keys) != 0):
-                bestCPU = 100
+                bestCPU = sys.maxint
+                bestServer = inputServersList[0]
                 for server in inputServersList:
                     if (server in keys) & (serversDictionary[server] < bestCPU):
                         bestServer = server
@@ -77,7 +83,7 @@ class AOSLoadBalancer(spyne.Service):
                     lock.release()
                     continue
             lock.release()
-            time.sleep(5)
+            time.sleep(1)
 
     #Webservice to register web servers
     @spyne.srpc(Unicode,str)
