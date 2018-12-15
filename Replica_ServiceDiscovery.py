@@ -111,7 +111,7 @@ class AOSServiceDiscovery(spyne.Service):
                             loadBalancerServerURL.remove(loadurl)
                         continue
                 lock.release()
-                time.sleep(10)
+                time.sleep(5)
         except Exception as identifier:
             pass
         
